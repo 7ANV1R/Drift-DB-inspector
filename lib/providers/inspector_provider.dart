@@ -83,6 +83,16 @@ final inspectorProvider = NotifierProvider<InspectorNotifier, InspectorState?>(
   InspectorNotifier.new,
 );
 
+/// Label for the macOS transparent title-bar strip (connect vs inspector).
+final macosTitleBarLabelProvider = Provider<String>((ref) {
+  final inspector = ref.watch(inspectorProvider);
+  if (inspector == null) {
+    return 'Drift Db Inspector';
+  }
+  final fileName = p.basename(inspector.remoteDbPath);
+  return '${inspector.packageName} · $fileName';
+});
+
 class InspectorNotifier extends Notifier<InspectorState?> {
   @override
   InspectorState? build() => null;
@@ -90,6 +100,9 @@ class InspectorNotifier extends Notifier<InspectorState?> {
   DbService get _db => ref.read(dbServiceProvider);
   AdbService get _adb => ref.read(adbServiceProvider);
   IosSimulatorService get _ios => ref.read(iosSimulatorServiceProvider);
+
+  /// Lets the UI frame between heavy synchronous SQLite work on the isolate.
+  Future<void> _yieldToUi() => Future<void>.delayed(Duration.zero);
 
   Future<void> openDatabase({
     required ConnectBackend backend,
@@ -118,9 +131,15 @@ class InspectorNotifier extends Notifier<InspectorState?> {
         packageName,
         remoteDbPath,
       );
+      await _yieldToUi();
       _db.openDatabase(localPath);
+      await _yieldToUi();
       final tables = _db.getTables();
+      await _yieldToUi();
       final first = tables.isNotEmpty ? tables.first : null;
+      final columns =
+          first != null ? _db.getTableColumns(first) : const <ColumnInfo>[];
+      await _yieldToUi();
       state = InspectorState(
         backend: backend,
         serial: serial,
@@ -128,13 +147,16 @@ class InspectorNotifier extends Notifier<InspectorState?> {
         remoteDbPath: remoteDbPath,
         tables: tables,
         selectedTable: first,
-        columns: first != null ? _db.getTableColumns(first) : const [],
+        columns: columns,
         rows: const [],
         totalRows: 0,
         page: 0,
         searchQuery: '',
       );
-      if (first != null) _loadRows();
+      if (first != null) {
+        await _yieldToUi();
+        _loadRows();
+      }
     } catch (e) {
       state = state?.copyWith(loading: false, error: e.toString());
     }

@@ -49,10 +49,11 @@ class ConnectRemoteFlow extends ConsumerWidget {
     final simulatorsAsync = ref.watch(simulatorsProvider);
     final discoveryAsync = ref.watch(discoveryProvider);
     final dbPaths = discoveryAsync.value?.paths ?? [];
-    final discoveryLog = discoveryAsync.value?.log ?? '';
+    // final discoveryLog = discoveryAsync.value?.log ?? '';
     final discovering = discoveryAsync.isLoading;
 
     return Column(
+      mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         ConnectSectionLabel(
@@ -74,6 +75,8 @@ class ConnectRemoteFlow extends ConsumerWidget {
                   Platform.isIOS || Platform.isAndroid
                       ? 'Android listing runs on macOS with adb installed.'
                       : 'No device in "device" state. Plug in USB or start an emulator.',
+                  maxLines: 4,
+                  overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: scheme.onSurfaceVariant,
                   ),
@@ -104,6 +107,8 @@ class ConnectRemoteFlow extends ConsumerWidget {
                               children: [
                                 Text(
                                   d.model ?? d.serial,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
                                   style: theme.textTheme.bodyMedium?.copyWith(
                                     fontWeight: sel
                                         ? FontWeight.w700
@@ -112,6 +117,8 @@ class ConnectRemoteFlow extends ConsumerWidget {
                                 ),
                                 Text(
                                   d.serial,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                   style: theme.textTheme.labelSmall?.copyWith(
                                     color: scheme.onSurfaceVariant,
                                     fontFamily: 'monospace',
@@ -139,6 +146,8 @@ class ConnectRemoteFlow extends ConsumerWidget {
             ),
             error: (e, _) => Text(
               'Devices: $e',
+              maxLines: 4,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(color: scheme.error, fontSize: 13),
             ),
           )
@@ -160,6 +169,8 @@ class ConnectRemoteFlow extends ConsumerWidget {
               if (sims.isEmpty) {
                 return Text(
                   'No simulators. Open Simulator or Xcode → Devices.',
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: scheme.onSurfaceVariant,
                   ),
@@ -190,6 +201,8 @@ class ConnectRemoteFlow extends ConsumerWidget {
                               children: [
                                 Text(
                                   d.displayTitle,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
                                   style: theme.textTheme.bodyMedium?.copyWith(
                                     fontWeight: sel
                                         ? FontWeight.w700
@@ -227,6 +240,8 @@ class ConnectRemoteFlow extends ConsumerWidget {
             ),
             error: (e, _) => Text(
               'Simulators: $e',
+              maxLines: 4,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(color: scheme.error, fontSize: 13),
             ),
           ),
@@ -252,6 +267,8 @@ class ConnectRemoteFlow extends ConsumerWidget {
               backend == ConnectBackend.adb
                   ? 'Refresh devices'
                   : 'Refresh simulators',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ),
@@ -302,6 +319,8 @@ class ConnectRemoteFlow extends ConsumerWidget {
                 : (backend == ConnectBackend.adb
                     ? 'Discover databases'
                     : 'Find database files'),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
         if (dbPaths.isNotEmpty) ...[
@@ -336,6 +355,8 @@ class ConnectRemoteFlow extends ConsumerWidget {
                           children: [
                             Text(
                               name,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                               style: theme.textTheme.bodyMedium?.copyWith(
                                 fontWeight: sel
                                     ? FontWeight.w700
@@ -386,49 +407,54 @@ class ConnectRemoteFlow extends ConsumerWidget {
                     color: scheme.primary,
                   ),
             label: Text(
-              backend == ConnectBackend.adb ? 'Pull & inspect' : 'Copy & inspect',
+              backend == ConnectBackend.adb
+                  ? 'Pull & inspect'
+                  : 'Copy & inspect',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
-        if (discoveryLog.isNotEmpty) ...[
-          const SizedBox(height: 20),
-          ExpansionTile(
-            tilePadding: EdgeInsets.zero,
-            childrenPadding: EdgeInsets.zero,
-            title: Text(
-              'Discovery log',
-              style: theme.textTheme.labelLarge?.copyWith(
-                fontWeight: FontWeight.w600,
-                color: scheme.onSurfaceVariant,
-              ),
-            ),
-            children: [
-              Container(
-                height: 180,
-                margin: const EdgeInsets.only(top: 8),
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: scheme.surfaceContainerHighest.withValues(alpha: 0.4),
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    color: scheme.outlineVariant.withValues(alpha: 0.35),
-                  ),
-                ),
-                child: SingleChildScrollView(
-                  child: SelectableText(
-                    discoveryLog,
-                    style: TextStyle(
-                      fontFamily: 'monospace',
-                      fontSize: 10.5,
-                      height: 1.35,
-                      color: scheme.onSurface,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
+        // Discovery log (hidden for now).
+        // if (discoveryLog.isNotEmpty) ...[
+        //   const SizedBox(height: 20),
+        //   ExpansionTile(
+        //     tilePadding: EdgeInsets.zero,
+        //     childrenPadding: EdgeInsets.zero,
+        //     title: Text(
+        //       'Discovery log',
+        //       style: theme.textTheme.labelLarge?.copyWith(
+        //         fontWeight: FontWeight.w600,
+        //         color: scheme.onSurfaceVariant,
+        //       ),
+        //     ),
+        //     children: [
+        //       Container(
+        //         height: 180,
+        //         margin: const EdgeInsets.only(top: 8),
+        //         padding: const EdgeInsets.all(10),
+        //         decoration: BoxDecoration(
+        //           color: scheme.surfaceContainerHighest.withValues(alpha: 0.4),
+        //           borderRadius: BorderRadius.circular(10),
+        //           border: Border.all(
+        //             color: scheme.outlineVariant.withValues(alpha: 0.35),
+        //           ),
+        //         ),
+        //         child: SingleChildScrollView(
+        //           child: SelectableText(
+        //             discoveryLog,
+        //             style: TextStyle(
+        //               fontFamily: 'monospace',
+        //               fontSize: 10.5,
+        //               height: 1.35,
+        //               color: scheme.onSurface,
+        //             ),
+        //           ),
+        //         ),
+        //       ),
+        //     ],
+        //   ),
+        // ],
       ],
     );
   }

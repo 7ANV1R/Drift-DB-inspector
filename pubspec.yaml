@@ -7,13 +7,16 @@ environment:
   sdk: ^3.11.4
 
 dependencies:
+  desktop_drop: ^0.7.0
   file_picker: ^8.3.2
   flutter:
     sdk: flutter
+  flutter_animate: ^4.5.2
   flutter_hooks: ^0.21.3+1
   flutter_popup: ^3.3.9
   hooks_riverpod: ^3.3.1
   hugeicons: ^1.1.6
+  macos_window_utils: ^1.9.1
   path: ^1.9.1
   path_provider: ^2.1.5
   shared_preferences: ^2.5.5

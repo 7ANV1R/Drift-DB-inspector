@@ -3,30 +3,31 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 
-import '../../models/connect_backend.dart';
 import '../app_icon.dart';
-import 'connect_helpers.dart';
 
-class ConnectHeader extends StatelessWidget {
-  const ConnectHeader({
+/// Brand row for the top-left of the connect screen (outside the main card).
+class ConnectTopBrandRow extends StatelessWidget {
+  const ConnectTopBrandRow({
     super.key,
-    required this.backend,
     required this.scheme,
     required this.theme,
   });
 
-  final ConnectBackend backend;
   final ColorScheme scheme;
   final ThemeData theme;
+
+  static const _subtitle =
+      'Browse SQLite from Android, the iOS Simulator, or a file on disk.';
 
   @override
   Widget build(BuildContext context) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(12),
             color: scheme.primaryContainer.withValues(alpha: 0.65),
           ),
           child: AppIcon(
@@ -47,12 +48,14 @@ class ConnectHeader extends StatelessWidget {
                   letterSpacing: -0.4,
                 ),
               ),
+              const SizedBox(height: 4),
               Text(
                 Platform.isMacOS
-                    ? connectSubtitle(backend)
+                    ? _subtitle
                     : 'Use the Mac app for devices and simulators.',
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: scheme.onSurfaceVariant,
+                  height: 1.35,
                 ),
               ),
             ],

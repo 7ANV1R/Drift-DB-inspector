@@ -80,19 +80,19 @@ ThemeData buildAppTheme({required Brightness brightness}) {
       fillColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.45),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(10),
         borderSide: BorderSide(
           color: colorScheme.outline.withValues(alpha: 0.35),
         ),
       ),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(10),
         borderSide: BorderSide(
           color: colorScheme.outline.withValues(alpha: 0.28),
         ),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(10),
         borderSide: BorderSide(color: colorScheme.primary, width: 2),
       ),
     ),

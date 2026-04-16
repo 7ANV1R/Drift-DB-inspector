@@ -67,44 +67,13 @@ class InspectorScreen extends HookConsumerWidget {
                   color: scheme.primary,
                 ),
                 const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    '${inspector.packageName}  ·  ${inspector.remoteDbPath.split('/').last}',
-                    style: theme.textTheme.labelLarge?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: -0.2,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                if (inspector.loading)
-                  Padding(
-                    padding: const EdgeInsets.only(right: 12),
-                    child: SizedBox(
-                      width: 16,
-                      height: 16,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: scheme.primary,
-                      ),
-                    ),
-                  ),
-                ThemeModeMenuButton(
-                  anchorIcon: HugeIcons.strokeRoundedPaintBoard,
-                  style: ThemeModeMenuStyle.toolbar,
-                ),
-                const SizedBox(width: 4),
-                _BarButton(
-                  tooltip: inspector.backend == ConnectBackend.localFile
-                      ? 'Reload from disk'
-                      : inspector.backend == ConnectBackend.adb
-                          ? 'Re-sync from device'
-                          : 'Copy again from simulator',
-                  icon: HugeIcons.strokeRoundedReload,
+                _TopRefreshButton(
+                  loading: inspector.loading,
+                  backend: inspector.backend,
                   onPressed: () =>
                       ref.read(inspectorProvider.notifier).refresh(),
                 ),
-                const SizedBox(width: 4),
+                const Spacer(),
                 _BarButton(
                   tooltip: 'Close & pick another database',
                   icon: HugeIcons.strokeRoundedCancel01,
@@ -175,7 +144,7 @@ class InspectorScreen extends HookConsumerWidget {
                       ),
                       Expanded(
                         child: ListView.builder(
-                          padding: const EdgeInsets.fromLTRB(6, 0, 6, 12),
+                          padding: const EdgeInsets.fromLTRB(6, 0, 6, 6),
                           itemCount: inspector.tables.length,
                           itemBuilder: (_, i) {
                             final name = inspector.tables[i];
@@ -236,6 +205,16 @@ class InspectorScreen extends HookConsumerWidget {
                           },
                         ),
                       ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(6, 0, 6, 10),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: ThemeModeMenuButton(
+                            anchorIcon: HugeIcons.strokeRoundedPaintBoard,
+                            style: ThemeModeMenuStyle.floating,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -293,11 +272,28 @@ class InspectorScreen extends HookConsumerWidget {
                                           const EdgeInsets.symmetric(
                                             horizontal: 12,
                                           ),
+                                      filled: true,
+                                      fillColor: scheme.surfaceContainerHighest
+                                          .withValues(alpha: 0.35),
                                       border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10),
+                                        borderRadius: BorderRadius.circular(8),
                                         borderSide: BorderSide(
                                           color: scheme.outlineVariant
                                               .withValues(alpha: 0.3),
+                                        ),
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                        borderSide: BorderSide(
+                                          color: scheme.outlineVariant
+                                              .withValues(alpha: 0.3),
+                                        ),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                        borderSide: BorderSide(
+                                          color: scheme.primary,
+                                          width: 2,
                                         ),
                                       ),
                                     ),
@@ -330,6 +326,89 @@ class InspectorScreen extends HookConsumerWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _TopRefreshButton extends StatelessWidget {
+  const _TopRefreshButton({
+    required this.loading,
+    required this.backend,
+    required this.onPressed,
+  });
+
+  final bool loading;
+  final ConnectBackend backend;
+  final VoidCallback onPressed;
+
+  String get _tooltip => switch (backend) {
+        ConnectBackend.localFile => 'Reload from disk',
+        ConnectBackend.adb => 'Re-sync from device',
+        ConnectBackend.iosSimulator => 'Copy again from simulator',
+      };
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+
+    return Tooltip(
+      message: _tooltip,
+      waitDuration: const Duration(milliseconds: 400),
+      child: TextButton(
+        onPressed: loading ? null : onPressed,
+        style: ButtonStyle(
+          padding: const WidgetStatePropertyAll(
+            EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+          ),
+          minimumSize: const WidgetStatePropertyAll(Size.zero),
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          foregroundColor: WidgetStatePropertyAll(scheme.onSurface),
+          overlayColor: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.hovered)) {
+              return scheme.primary.withValues(alpha: 0.12);
+            }
+            if (states.contains(WidgetState.pressed)) {
+              return scheme.primary.withValues(alpha: 0.2);
+            }
+            return null;
+          }),
+          shape: const WidgetStatePropertyAll(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(6)),
+            ),
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Refresh',
+              style: theme.textTheme.labelMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+                letterSpacing: -0.15,
+                fontSize: 12.5,
+              ),
+            ),
+            const SizedBox(width: 6),
+            if (loading)
+              SizedBox(
+                width: 15,
+                height: 15,
+                child: CircularProgressIndicator(
+                  strokeWidth: 1.75,
+                  color: scheme.primary,
+                ),
+              )
+            else
+              AppIcon(
+                HugeIcons.strokeRoundedReload,
+                size: 15,
+                color: scheme.primary,
+              ),
+          ],
+        ),
       ),
     );
   }

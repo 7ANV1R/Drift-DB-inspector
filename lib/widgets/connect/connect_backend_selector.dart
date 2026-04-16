@@ -30,6 +30,12 @@ class ConnectBackendSelector extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         SegmentedButton<ConnectBackend>(
+          style: SegmentedButton.styleFrom(
+            visualDensity: VisualDensity.compact,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(6),
+            ),
+          ),
           segments: [
             ButtonSegment<ConnectBackend>(
               value: ConnectBackend.adb,

@@ -8,7 +8,7 @@
 PRODUCT_NAME = Drift DB Inspector
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.example.driftDbInspector
+PRODUCT_BUNDLE_IDENTIFIER = wedevs.driftdbinspactor.rivnat
 
 // The copyright displayed in application information
-PRODUCT_COPYRIGHT = Copyright © 2026 com.example. All rights reserved.
+PRODUCT_COPYRIGHT = Copyright © 2026 rivnat with weDevs. All rights reserved.
