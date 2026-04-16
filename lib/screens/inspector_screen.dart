@@ -9,6 +9,7 @@ import '../models/connect_backend.dart';
 import '../providers/inspector_provider.dart';
 import '../widgets/app_icon.dart';
 import '../widgets/inspector_data_table.dart';
+import '../widgets/theme_mode_menu_button.dart';
 import 'connect_screen.dart';
 
 class InspectorScreen extends HookConsumerWidget {
@@ -88,6 +89,11 @@ class InspectorScreen extends HookConsumerWidget {
                       ),
                     ),
                   ),
+                ThemeModeMenuButton(
+                  anchorIcon: HugeIcons.strokeRoundedPaintBoard,
+                  style: ThemeModeMenuStyle.toolbar,
+                ),
+                const SizedBox(width: 4),
                 _BarButton(
                   tooltip: inspector.backend == ConnectBackend.localFile
                       ? 'Reload from disk'

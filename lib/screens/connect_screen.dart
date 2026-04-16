@@ -1,6 +1,7 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:path/path.dart' as p;
 
@@ -14,6 +15,7 @@ import '../widgets/connect/connect_helpers.dart';
 import '../widgets/connect/connect_local_file_section.dart';
 import '../widgets/connect/connect_primitives.dart';
 import '../widgets/connect/connect_remote_flow.dart';
+import '../widgets/theme_mode_menu_button.dart';
 import 'inspector_screen.dart';
 
 class ConnectScreen extends HookConsumerWidget {
@@ -138,6 +140,24 @@ class ConnectScreen extends HookConsumerWidget {
 
     return Scaffold(
       backgroundColor: scheme.surfaceContainerLow,
+      bottomNavigationBar: ColoredBox(
+        color: scheme.surfaceContainerLow,
+        child: SafeArea(
+          minimum: const EdgeInsets.only(bottom: 10),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ThemeModeMenuButton(
+                  anchorIcon: HugeIcons.strokeRoundedPaintBoard,
+                  style: ThemeModeMenuStyle.floating,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 28),
