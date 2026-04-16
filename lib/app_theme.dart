@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+
+const _kFontFamily = 'Plus Jakarta Sans';
 
 ThemeData buildAppTheme({required Brightness brightness}) {
-  const seed = Color(0xFF6366F1);
+  // Muted blue-gray: calm in light mode, readable accents in dark (not neon indigo).
+  const seed = Color(0xFF5C6670);
   final colorScheme = ColorScheme.fromSeed(
     seedColor: seed,
     brightness: brightness,
-    dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
+    dynamicSchemeVariant: DynamicSchemeVariant.neutral,
   );
 
   final base = ThemeData(
@@ -15,9 +17,11 @@ ThemeData buildAppTheme({required Brightness brightness}) {
     colorScheme: colorScheme,
     visualDensity: VisualDensity.standard,
     splashFactory: InkSparkle.splashFactory,
+    fontFamily: _kFontFamily,
   );
 
-  final textTheme = GoogleFonts.plusJakartaSansTextTheme(base.textTheme).apply(
+  final textTheme = base.textTheme.apply(
+    fontFamily: _kFontFamily,
     bodyColor: colorScheme.onSurface,
     displayColor: colorScheme.onSurface,
   );
