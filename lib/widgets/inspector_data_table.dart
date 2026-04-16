@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../models/table_info.dart';
 import '../providers/inspector_provider.dart';
+import 'app_icon.dart';
 
 class InspectorDataTable extends HookConsumerWidget {
   const InspectorDataTable({super.key});
@@ -102,7 +104,7 @@ class InspectorDataTable extends HookConsumerWidget {
               ),
               const Spacer(),
               _PageButton(
-                icon: Icons.chevron_left_rounded,
+                icon: HugeIcons.strokeRoundedArrowLeft01,
                 onPressed: page > 0 && !inspector.loading
                     ? () => ref.read(inspectorProvider.notifier).prevPage()
                     : null,
@@ -117,7 +119,7 @@ class InspectorDataTable extends HookConsumerWidget {
                 ),
               ),
               _PageButton(
-                icon: Icons.chevron_right_rounded,
+                icon: HugeIcons.strokeRoundedArrowRight01,
                 onPressed: page < lastPage && !inspector.loading
                     ? () => ref.read(inspectorProvider.notifier).nextPage()
                     : null,
@@ -172,10 +174,10 @@ class InspectorDataTable extends HookConsumerWidget {
                   children: [
                     Text(col.name, style: headerStyle),
                     const SizedBox(width: 4),
-                    Icon(
+                    AppIcon(
                       expanded
-                          ? Icons.unfold_less_rounded
-                          : Icons.unfold_more_rounded,
+                          ? HugeIcons.strokeRoundedCollapse
+                          : HugeIcons.strokeRoundedExpand,
                       size: 14,
                       color: scheme.onPrimaryContainer.withValues(alpha: 0.6),
                     ),
@@ -266,7 +268,7 @@ class _CellWidget extends StatelessWidget {
 
 class _PageButton extends StatelessWidget {
   const _PageButton({required this.icon, this.onPressed});
-  final IconData icon;
+  final List<List<dynamic>> icon;
   final VoidCallback? onPressed;
 
   @override
@@ -278,7 +280,7 @@ class _PageButton extends StatelessWidget {
         iconSize: 18,
         padding: EdgeInsets.zero,
         onPressed: onPressed,
-        icon: Icon(icon),
+        icon: AppIcon(icon),
       ),
     );
   }

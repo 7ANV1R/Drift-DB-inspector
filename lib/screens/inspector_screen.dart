@@ -2,9 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../providers/inspector_provider.dart';
+import '../widgets/app_icon.dart';
 import '../widgets/inspector_data_table.dart';
 import 'connect_screen.dart';
 
@@ -57,7 +59,11 @@ class InspectorScreen extends HookConsumerWidget {
             padding: const EdgeInsets.symmetric(horizontal: 12),
             child: Row(
               children: [
-                Icon(Icons.storage_rounded, size: 20, color: scheme.primary),
+                AppIcon(
+                  HugeIcons.strokeRoundedDatabase,
+                  size: 20,
+                  color: scheme.primary,
+                ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -83,14 +89,14 @@ class InspectorScreen extends HookConsumerWidget {
                   ),
                 _BarButton(
                   tooltip: 'Re-sync from device',
-                  icon: Icons.sync_rounded,
+                  icon: HugeIcons.strokeRoundedReload,
                   onPressed: () =>
                       ref.read(inspectorProvider.notifier).refresh(),
                 ),
                 const SizedBox(width: 4),
                 _BarButton(
                   tooltip: 'Close & pick another database',
-                  icon: Icons.close_rounded,
+                  icon: HugeIcons.strokeRoundedCancel01,
                   onPressed: closeInspector,
                 ),
               ],
@@ -109,8 +115,8 @@ class InspectorScreen extends HookConsumerWidget {
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               child: Row(
                 children: [
-                  Icon(
-                    Icons.warning_amber_rounded,
+                  AppIcon(
+                    HugeIcons.strokeRoundedAlert02,
                     size: 16,
                     color: scheme.onErrorContainer,
                   ),
@@ -185,8 +191,8 @@ class InspectorScreen extends HookConsumerWidget {
                                     ),
                                     child: Row(
                                       children: [
-                                        Icon(
-                                          Icons.grid_on_rounded,
+                                        AppIcon(
+                                          HugeIcons.strokeRoundedGridTable,
                                           size: 14,
                                           color: selected
                                               ? scheme.onPrimaryContainer
@@ -265,9 +271,13 @@ class InspectorScreen extends HookConsumerWidget {
                                     style: theme.textTheme.bodySmall,
                                     decoration: InputDecoration(
                                       hintText: 'Search rows…',
-                                      prefixIcon: const Icon(
-                                        Icons.search_rounded,
-                                        size: 18,
+                                      prefixIconConstraints:
+                                          InputPrefixHugeIcon
+                                              .compactSlotConstraints,
+                                      prefixIcon: InputPrefixHugeIcon(
+                                        HugeIcons.strokeRoundedSearch01,
+                                        size: 16,
+                                        color: scheme.onSurfaceVariant,
                                       ),
                                       contentPadding:
                                           const EdgeInsets.symmetric(
@@ -288,8 +298,8 @@ class InspectorScreen extends HookConsumerWidget {
                               Tooltip(
                                 message:
                                     'Click column header to expand/collapse',
-                                child: Icon(
-                                  Icons.info_outline_rounded,
+                                child: AppIcon(
+                                  HugeIcons.strokeRoundedInformationCircle,
                                   size: 18,
                                   color: scheme.onSurfaceVariant.withValues(
                                     alpha: 0.5,
@@ -323,7 +333,7 @@ class _BarButton extends StatelessWidget {
   });
 
   final String tooltip;
-  final IconData icon;
+  final List<List<dynamic>> icon;
   final VoidCallback onPressed;
 
   @override
@@ -337,7 +347,7 @@ class _BarButton extends StatelessWidget {
         padding: EdgeInsets.zero,
         tooltip: tooltip,
         onPressed: onPressed,
-        icon: Icon(icon, color: scheme.onSurfaceVariant),
+        icon: AppIcon(icon, size: 18, color: scheme.onSurfaceVariant),
       ),
     );
   }

@@ -5,7 +5,7 @@
 // 'flutter create' template.
 
 // The application's name. By default this is also the title of the Flutter window.
-PRODUCT_NAME = drift_db_inspector
+PRODUCT_NAME = Drift DB Inspector
 
 // The application's bundle identifier
 PRODUCT_BUNDLE_IDENTIFIER = com.example.driftDbInspector

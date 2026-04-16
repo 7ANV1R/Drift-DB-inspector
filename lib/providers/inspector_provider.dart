@@ -6,6 +6,7 @@ import '../models/database_discovery_result.dart';
 import '../models/table_info.dart';
 import '../services/adb_service.dart';
 import '../services/db_service.dart';
+import 'adb_provider.dart';
 
 final dbServiceProvider = Provider<DbService>((ref) => DbService());
 
@@ -229,11 +230,14 @@ class DiscoveryNotifier extends AsyncNotifier<DatabaseDiscoveryResult?> {
     String packageName,
   ) async {
     state = const AsyncLoading();
-    final adb = ref.read(adbServiceProvider);
-    final result = await adb.discoverDatabases(serial, packageName);
-    state = AsyncData(result);
-    return result;
+    try {
+      final adb = ref.read(adbServiceProvider);
+      final result = await adb.discoverDatabases(serial, packageName);
+      state = AsyncData(result);
+      return result;
+    } catch (e, st) {
+      state = AsyncError(e, st);
+      rethrow;
+    }
   }
 }
-
-final adbServiceProvider = Provider<AdbService>((ref) => AdbService());
