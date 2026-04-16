@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../models/device.dart';
@@ -23,6 +25,9 @@ final devicesProvider = AsyncNotifierProvider<DevicesNotifier, List<AdbDevice>>(
 class DevicesNotifier extends AsyncNotifier<List<AdbDevice>> {
   @override
   Future<List<AdbDevice>> build() async {
+    if (Platform.isIOS || Platform.isAndroid) {
+      return const [];
+    }
     final adb = ref.read(adbServiceProvider);
     return adb.listDevices();
   }
@@ -30,6 +35,10 @@ class DevicesNotifier extends AsyncNotifier<List<AdbDevice>> {
   Future<void> refresh() async {
     ref.read(devicesRefreshingProvider.notifier).state = true;
     try {
+      if (Platform.isIOS || Platform.isAndroid) {
+        state = const AsyncData([]);
+        return;
+      }
       final adb = ref.read(adbServiceProvider);
       final list = await adb.listDevices();
       state = AsyncData(list);

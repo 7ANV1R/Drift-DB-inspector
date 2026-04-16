@@ -5,6 +5,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../models/connect_backend.dart';
 import '../providers/inspector_provider.dart';
 import '../widgets/app_icon.dart';
 import '../widgets/inspector_data_table.dart';
@@ -88,7 +89,11 @@ class InspectorScreen extends HookConsumerWidget {
                     ),
                   ),
                 _BarButton(
-                  tooltip: 'Re-sync from device',
+                  tooltip: inspector.backend == ConnectBackend.localFile
+                      ? 'Reload from disk'
+                      : inspector.backend == ConnectBackend.adb
+                          ? 'Re-sync from device'
+                          : 'Copy again from simulator',
                   icon: HugeIcons.strokeRoundedReload,
                   onPressed: () =>
                       ref.read(inspectorProvider.notifier).refresh(),
@@ -271,9 +276,8 @@ class InspectorScreen extends HookConsumerWidget {
                                     style: theme.textTheme.bodySmall,
                                     decoration: InputDecoration(
                                       hintText: 'Search rows…',
-                                      prefixIconConstraints:
-                                          InputPrefixHugeIcon
-                                              .compactSlotConstraints,
+                                      prefixIconConstraints: InputPrefixHugeIcon
+                                          .compactSlotConstraints,
                                       prefixIcon: InputPrefixHugeIcon(
                                         HugeIcons.strokeRoundedSearch01,
                                         size: 16,

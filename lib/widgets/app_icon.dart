@@ -28,12 +28,7 @@ class AppIcon extends StatelessWidget {
 
 /// Use as [InputDecoration.prefixIcon]: Material expands prefix; [HugeIcon] must be boxed.
 class InputPrefixHugeIcon extends StatelessWidget {
-  const InputPrefixHugeIcon(
-    this.icon, {
-    super.key,
-    this.size = 18,
-    this.color,
-  });
+  const InputPrefixHugeIcon(this.icon, {super.key, this.size = 18, this.color});
 
   final List<List<dynamic>> icon;
   final double size;

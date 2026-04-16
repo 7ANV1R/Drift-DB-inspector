@@ -1,18 +1,24 @@
+import 'dart:io';
+
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
+import '../models/connect_backend.dart';
 import '../models/database_discovery_result.dart';
 import '../models/table_info.dart';
 import '../services/adb_service.dart';
 import '../services/db_service.dart';
+import '../services/ios_simulator_service.dart';
 import 'adb_provider.dart';
+import 'simulator_provider.dart';
 
 final dbServiceProvider = Provider<DbService>((ref) => DbService());
 
 /// Holds entire inspector state after a database is opened.
 class InspectorState {
   const InspectorState({
+    required this.backend,
     required this.serial,
     required this.packageName,
     required this.remoteDbPath,
@@ -27,6 +33,8 @@ class InspectorState {
     this.error,
   });
 
+  /// Android serial, or iOS Simulator UDID.
+  final ConnectBackend backend;
   final String serial;
   final String packageName;
   final String remoteDbPath;
@@ -54,6 +62,7 @@ class InspectorState {
     List<String>? tables,
   }) {
     return InspectorState(
+      backend: backend,
       serial: serial,
       packageName: packageName,
       remoteDbPath: remoteDbPath,
@@ -80,13 +89,16 @@ class InspectorNotifier extends Notifier<InspectorState?> {
 
   DbService get _db => ref.read(dbServiceProvider);
   AdbService get _adb => ref.read(adbServiceProvider);
+  IosSimulatorService get _ios => ref.read(iosSimulatorServiceProvider);
 
   Future<void> openDatabase({
+    required ConnectBackend backend,
     required String serial,
     required String packageName,
     required String remoteDbPath,
   }) async {
     state = InspectorState(
+      backend: backend,
       serial: serial,
       packageName: packageName,
       remoteDbPath: remoteDbPath,
@@ -100,11 +112,17 @@ class InspectorNotifier extends Notifier<InspectorState?> {
       loading: true,
     );
     try {
-      final localPath = await _pullDb(serial, packageName, remoteDbPath);
+      final localPath = await _pullDb(
+        backend,
+        serial,
+        packageName,
+        remoteDbPath,
+      );
       _db.openDatabase(localPath);
       final tables = _db.getTables();
       final first = tables.isNotEmpty ? tables.first : null;
       state = InspectorState(
+        backend: backend,
         serial: serial,
         packageName: packageName,
         remoteDbPath: remoteDbPath,
@@ -126,6 +144,7 @@ class InspectorNotifier extends Notifier<InspectorState?> {
     final s = state;
     if (s == null) return;
     await openDatabase(
+      backend: s.backend,
       serial: s.serial,
       packageName: s.packageName,
       remoteDbPath: s.remoteDbPath,
@@ -200,18 +219,32 @@ class InspectorNotifier extends Notifier<InspectorState?> {
   }
 
   Future<String> _pullDb(
+    ConnectBackend backend,
     String serial,
     String packageName,
     String remoteDbPath,
   ) async {
+    if (backend == ConnectBackend.localFile) {
+      final f = File(remoteDbPath);
+      if (!await f.exists()) {
+        throw StateError('File not found: $remoteDbPath');
+      }
+      return p.normalize(remoteDbPath);
+    }
+
     final temp = await getTemporaryDirectory();
+    final bucket = backend == ConnectBackend.adb ? 'adb' : 'ios';
     final localDir = p.join(
       temp.path,
       'drift_db_inspector',
+      bucket,
       serial,
-      packageName.replaceAll('.', '_'),
+      packageName.replaceAll(RegExp(r'[^a-zA-Z0-9_-]'), '_'),
     );
-    return _adb.pullDatabase(serial, packageName, remoteDbPath, localDir);
+    if (backend == ConnectBackend.adb) {
+      return _adb.pullDatabase(serial, packageName, remoteDbPath, localDir);
+    }
+    return _ios.copyDatabase(remoteDbPath, localDir);
   }
 }
 
@@ -226,13 +259,25 @@ class DiscoveryNotifier extends AsyncNotifier<DatabaseDiscoveryResult?> {
   Future<DatabaseDiscoveryResult?> build() async => null;
 
   Future<DatabaseDiscoveryResult> discover(
-    String serial,
+    ConnectBackend backend,
+    String deviceId,
     String packageName,
   ) async {
     state = const AsyncLoading();
     try {
-      final adb = ref.read(adbServiceProvider);
-      final result = await adb.discoverDatabases(serial, packageName);
+      final DatabaseDiscoveryResult result;
+      switch (backend) {
+        case ConnectBackend.adb:
+          result = await ref
+              .read(adbServiceProvider)
+              .discoverDatabases(deviceId, packageName);
+        case ConnectBackend.iosSimulator:
+          result = await ref
+              .read(iosSimulatorServiceProvider)
+              .discoverDatabases(deviceId, packageName);
+        case ConnectBackend.localFile:
+          throw UnsupportedError('Use file picker for local databases.');
+      }
       state = AsyncData(result);
       return result;
     } catch (e, st) {
