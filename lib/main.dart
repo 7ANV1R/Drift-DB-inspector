@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'app_theme.dart';
-import 'screens/home_screen.dart';
+import 'screens/connect_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const DriftDbInspectorApp());
+  runApp(const ProviderScope(child: DriftDbInspectorApp()));
 }
 
 class DriftDbInspectorApp extends StatelessWidget {
@@ -15,10 +16,11 @@ class DriftDbInspectorApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Drift DB Inspector',
+      debugShowCheckedModeBanner: false,
       theme: buildAppTheme(brightness: Brightness.light),
       darkTheme: buildAppTheme(brightness: Brightness.dark),
       themeMode: ThemeMode.system,
-      home: const HomeScreen(),
+      home: const ConnectScreen(),
     );
   }
 }
