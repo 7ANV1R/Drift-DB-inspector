@@ -4,6 +4,8 @@ A small desktop app for **Mac** that helps you **open and browse SQLite database
 
 You pick your device, type the app’s package name, and pull a copy of the database to your computer. Then you can look at tables, pages of rows, and search—like a simple database viewer.
 
+![Drift DB Inspector Preview](./DriftDBInspector_preview.gif)
+
 ## Who is this for?
 
 People who use [Drift](https://pub.dev/packages/drift) (or plain SQLite) on Android and want to **inspect data** without digging through files on the device by hand.
