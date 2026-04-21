@@ -20,6 +20,8 @@ People who use [Drift](https://pub.dev/packages/drift) (or plain SQLite) on Andr
 
 ## Run the app
 
+If you want to try the app without building it yourself, **[v0.1.0](https://github.com/7ANV1R/Drift-DB-inspector/releases/tag/initial-release)** includes a **macOS `.dmg`** installer. The release page has steps for opening the unsigned app.
+
 From this folder:
 
 ```bash
